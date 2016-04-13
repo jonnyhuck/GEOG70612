@@ -4,4 +4,7 @@ handouts/*
 images/*
 index.html
 practical*/*
-nbproject/
+nbproject/*
+*/nbproject/*
+markdown/*
+.DS_Store
