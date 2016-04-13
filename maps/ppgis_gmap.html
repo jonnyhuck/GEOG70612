@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PPGIS Map</title>
+        <meta name="viewport" content="initial-scale=1.0">
+        <meta charset="utf-8">
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            #map {
+                height: 100%;
+            }
+            #floating-panel {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                z-index: 5;
+                background-color: #fff;
+                padding: 5px;
+                border: 1px solid #999;
+                text-align: center;
+                font-family: 'Roboto','sans-serif';
+                line-height: 30px;
+                padding-left: 10px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="floating-panel">
+            <input onclick="storeMarkers(key, markers);" type=button value="Store Markers">
+            <input onclick="retrieveStoredMarkers(key);" type=button value="Retrieve Markers">
+            <input onclick="deleteMarkers();" type=button value="Delete Markers">
+        </div>
+        <div id="map"></div>
+        <script>
+
+            //a global variable for your database key
+            var key = "huck";
+
+            //a global variable to hold the map
+            var map;
+
+            //a global array to store a reference to all of our markers
+            var markers = [];
+
+            /**
+             * Initialise the map
+             */
+            function initMap() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 53.4668406, lng: -2.2359519},
+                    zoom: 15
+                });
+
+                //set listener so coordinates update on the map moving
+                map.addListener('click', function (e) {
+                    addPoint(e.latLng);
+                });
+            }
+
+            /**
+             * Adds a marker to the map at a given location
+             * @param {google.maps.LatLng} latLng the location at which to add the point
+             */
+            function addPoint(latLng) {
+
+                //add a new marker to the markers array using the provided location
+                markers.push(new google.maps.Marker({
+                    position: latLng,
+                    map: map,
+                    icon: makeDot("#00ffff", 30),
+                    clickable: false,
+                    draggable: true
+                }));
+            }
+
+            /**
+             * Delete all of the markers by removing them from the map and emptying the markers array
+             */
+            function deleteMarkers() {
+
+                //set all of the markers' map to null
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+
+                //set the markers array to an empty array
+                markers = [];
+            }
+
+            /**
+             * Called automatically when storeData has successfully stored the data
+             * Clears the markers from the map
+             */
+            function dataIsStored() {
+                deleteMarkers();
+            }
+
+            /**
+             * Called automatically when retrieveStoredData has returned the data
+             * Draws the results to the map
+             * @param jsonArray dataIn
+             */
+            function dataIsReady(dataIn) {
+
+                //loop through each array of points
+                for (var i = 0; i < dataIn.length; i++) {
+
+                    //get the next points array
+                    var points = JSON.parse(dataIn[i]);
+
+                    //loop through each location, adding to the map
+                    for (var j = 0; j < points.length; j++) {
+
+                        //add to the map
+                        addPoint({lat: points[j].lat, lng: points[j].lng})
+                    }
+                }
+            }
+        </script>
+        <script src="http://students.jonnyhuck.co.uk/code/dots.js"></script>
+        <script src="http://students.jonnyhuck.co.uk/code/store.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+    </body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Crime Map</title>
+        <meta name="viewport" content="initial-scale=1.0">
+        <meta name="author" content="jonnyhuck">
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            #map {
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+
+            //variables in the global scope
+            var map;
+            var httpRequest;
+            var jsonString;
+
+            /**
+             * Create a Google Map and add markers for each location
+             * returns google.maps.Map 
+             */
+            function initMap() {
+
+                //initialise the map
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 53.4668406, lng: -2.2359519},
+                    zoom: 13
+                });
+
+                //get some data to map
+                getCrimes();
+            }
+
+            /**
+             * Load the crime markers onto the Google Map
+             * returns JSON array 
+             */
+            function getCrimes() {
+                makeRequest("https://data.police.uk/api/crimes-street/all-crime?lat=53.4807593&lng=-2.2426305");
+            }
+
+            /**
+             * Load the crime markers onto the Google Map
+             * returns JSON array 
+             */
+            function makeRequest(url) {
+
+                //initialise the XMLHttpRequest object
+                httpRequest = new XMLHttpRequest();
+
+                //this will happen if the XMLHttpRequest object cannot be created (this can happen in Internet Explorer)
+                if (!httpRequest) {
+
+                    //warn the user and exit the function by returning false
+                    alert('Warning: Cannot create an XMLHTTP instance');
+                    return false;
+                }
+
+                //set an event listener for when the HTTP state changes
+                httpRequest.onreadystatechange = function () {
+
+                    //a successful HTTP request returns a status of 200
+                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                        if (httpRequest.status === 200) {
+
+                            //get the json String, parse top JSON object
+                            jsonString = JSON.parse(httpRequest.responseText);
+
+                            //load it onto the map
+                            crimesToMap();
+                        }
+                    }
+                };
+
+                //prepare and send the request
+                httpRequest.open('GET', url);
+                httpRequest.send();
+            }
+
+            /**
+             * Load the crime markers onto the Google Map
+             * returns nothing 
+             */
+            function crimesToMap() {
+
+                //create the markers
+                var crime;
+                var markers = [];
+                for (var i = 0; i < jsonString.length; i++) {
+                    crime = jsonString[i];
+                    markers.push(new google.maps.Marker({
+                        position: {lat: parseFloat(crime['location']['latitude']), 
+                            lng: parseFloat(crime['location']['longitude'])},
+                        map: map,
+                        icon: makeDot("#ff00ff", 12),
+                        clickable: false
+                    }));
+                }
+
+                //set the map bounds to fit the markers
+                var bounds = new google.maps.LatLngBounds();
+                for (var i = 0; i < markers.length; i++) {
+                    bounds.extend(markers[i].getPosition());
+                }
+                map.fitBounds(bounds);
+            }
+
+        </script>
+        <script src="http://students.jonnyhuck.co.uk/code/dots.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"async defer></script>
+    </body>
+</html>

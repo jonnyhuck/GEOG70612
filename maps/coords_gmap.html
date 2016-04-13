@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Coordinates</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      #map {
+        width: 800px;
+        height: 500px;
+      }
+      #coord_output {
+        margin-top: 10px;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="coord_output">WGS84: Loading...<br>Web Mercator: Loading...<br>Pixels: Loading...<br>Tile Ref.(z/x/y): Loading...</div>
+    <script>
+
+		/**
+		 * Initialise the Google Map
+		 */
+		var map;
+		function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+					center: {lat: 53.4668406, lng: -2.2359519}, 
+					zoom: 15
+// 					center: {lat: -90, lng: 180}, 
+// 					zoom: 0
+				});
+			
+			//set the initial values in the coordinate panel
+			updateCoords();
+			
+			//set listener so coordinates update on the map moving
+			map.addListener('center_changed', function(){
+				updateCoords();
+			});
+			
+			//set listener so coordinates update on the map zooming
+			map.addListener('zoom_changed', function(){
+				updateCoords();
+			});
+		}
+		
+		/**
+		 * Update the coordinate panel
+		 */
+		function updateCoords(){
+		
+			//zoom
+			var zoom = map.getZoom();
+
+			//longitude, latitude
+			var latLng = map.getCenter();
+			var ll = latLng.lng().toString() + ", " + latLng.lat().toString();
+	
+			//mercator
+			var mercator = getWebMercatorCoordinates(latLng);
+			var mc = mercator.x.toString() + ", " + mercator.y.toString();
+	
+			//pixel
+			var pixels = getPixelCoordinates(latLng, zoom);
+			var px = pixels.x.toString() + ", " + pixels.y.toString();
+	
+			//tile reference
+			var tileref = getTileReference(pixels, zoom);
+			var tr = zoom.toString() + "/" + tileref.x.toString() + "/" + tileref.y.toString();
+	
+			//combine
+			var text = "WGS84: " + ll + "<br>Web Mercator: " + mc + "<br>Pixels: " + px + "<br>Tile Ref.(z/x/y): " + tr;
+	
+			//write to web page
+			document.getElementById("coord_output").innerHTML = text;
+		}
+    </script>
+    <script src="http://students.jonnyhuck.co.uk/code/coordinates.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+  </body>
+</html>
