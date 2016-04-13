@@ -8,3 +8,5 @@ nbproject/*
 */nbproject/*
 markdown/*
 .DS_Store
+maps/_formatter.html
+maps/_formatter.js
