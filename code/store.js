@@ -17,7 +17,7 @@ function storeMarkers(key, data) {
     var data = JSON.stringify(markerArray);
 
     //Prepare URL to clear the database
-    var strUrl = ["http://students.jonnyhuck.co.uk/store/store.php?action=store&key=",
+    var strUrl = ["http://students.jonnyhuck.co.uk/gisandtheweb/store/store.php?action=store&key=",
         key, "&data=", data].join("");
 
     //make cross platform request object
@@ -55,7 +55,7 @@ function retrieveStoredMarkers(key) {
             new ActiveXObject("Microsoft.XMLHTTP");
 
     //Prepare URL to clear the database
-    var strUrl = ["http://students.jonnyhuck.co.uk/store/store.php?action=retrieve&key=",
+    var strUrl = ["http://students.jonnyhuck.co.uk/gisandtheweb/store/store.php?action=retrieve&key=",
         key].join("");
 
     //make cross platform request object

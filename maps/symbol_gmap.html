@@ -93,80 +93,24 @@
              */
             function crimesToMap() {
 
-                //empty variable to hold colour string
-                var dotColour = '';
-
-                //create the markers
-                var crime;
-                var markers = [];
-                for (var i = 0; i < jsonString.length; i++) {
-                    crime = jsonString[i];
-
-                    //work out which colour it should be
-                    var category = crime['category'];
-                    
-                    //you can log out the crime types that you have to help if you like
-                    //console.log(category);
-
-                    //assign the appropriate colour
-                    switch (category) {
-                        case "anti-social-behaviour":
-                            dotColour = "#a6cee3";
-                            break;
-                        case "burglary":
-                            dotColour = "#1f78b4";
-                            break;
-                        case "criminal-damage-and-arson":
-                            dotColour = "#b2df8a";
-                            break;
-                        case "drugs":
-                            dotColour = "#33a02c";
-                            break;
-                        case "possession-of-weapons":
-                            dotColour = "#fb9a99";
-                            break;
-                        case "public-disorder-and-weapons":
-                            dotColour = "#e31a1c";
-                            break;
-                        case "public-order":
-                            dotColour = "#fdbf6f";
-                            break;
-                        case "robbery":
-                            dotColour = "#ff7f00";
-                            break;
-                        case "shoplifting":
-                            dotColour = "#cab2d6";
-                            break;
-                        case "theft-from-the-person":
-                            dotColour = "#6a3d9a";
-                            break;
-                        case "vehicle-crime":
-                            dotColour = "#ffff99";
-                            break;
-                        case "violent-crime":
-                            dotColour = "#b15928";
-                            break;
-                        default:
-                            //just use grey for any other crimes...
-                            dotColour = "#aaaaaa";
-                    }
-
-                    //create the marker
-                    markers.push(new google.maps.Marker({
-                        position: {lat: parseFloat(crime['location']['latitude']),
-                            lng: parseFloat(crime['location']['longitude'])},
-                        map: map,
-                        icon: {
+				//create the markers
+				var crime;
+				var markers = [];
+				for (var i = 0; i < jsonString.length; i++) {
+					crime = jsonString[i];
+					markers.push(new google.maps.Marker({
+						position: {lat: parseFloat(crime['location']['latitude']), 
+							lng: parseFloat(crime['location']['longitude'])},
+						map: map,
+						clickable: false,
+						icon: {
 							path: google.maps.SymbolPath.CIRCLE,
 							scale: 5,
 							fillOpacity: 1.0,
-							fillColor: dotColour,
-							strokeColor: '#ffffff',
-							strokeWeight: 1.0
-						},
-                        clickable: false
-                    }));
-                }
+							strokeWeight: 0
+						}
+					}));
+				}
 
                 //set the map bounds to fit the markers
                 var bounds = new google.maps.LatLngBounds();
