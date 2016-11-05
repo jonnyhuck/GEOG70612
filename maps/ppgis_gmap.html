@@ -72,7 +72,13 @@
                 markers.push(new google.maps.Marker({
                     position: latLng,
                     map: map,
-                    icon: makeDot("#00ffff", 30),
+                    icon: {
+						path: google.maps.SymbolPath.CIRCLE,
+						scale: 10,
+						fillOpacity: 1.0,
+						fillColor: "#00ffff",
+						strokeWeight: 0
+					},
                     clickable: false,
                     draggable: true
                 }));
@@ -122,7 +128,6 @@
                 }
             }
         </script>
-        <script src="http://students.jonnyhuck.co.uk/gisandtheweb/code/dots.js"></script>
         <script src="http://students.jonnyhuck.co.uk/gisandtheweb/code/store.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
     </body>

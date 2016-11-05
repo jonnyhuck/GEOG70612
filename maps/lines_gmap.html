@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>OD Line Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+/* 
+        width: 800px;
+        height: 500px;
+ */
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+
+		var map;
+		var httpRequest;
+		var jsonString;
+		
+		/**
+		 * Callback for when google maps is loaded
+		 */
+		function initMap() {
+		
+	
+		  	//set up the map
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: 51.5073509, lng: -0.12775829}, 
+				zoom: 12,
+				styles: [{
+					stylers: [{
+						saturation: -100
+					}]
+				}]
+			});
+			
+			//load the journey data
+			getJourneys();
+		}
+		
+		/**
+		 * Load the London Underground journeys onto the Google Map
+		 * returns JSON array 
+		 */
+		function getJourneys() {
+			makeRequest("./underground.json");
+		}
+
+		/**
+		 * Load the crime markers onto the Google Map
+		 * returns JSON array 
+		 */
+		function makeRequest(url) {
+
+			//initialise the XMLHttpRequest object
+			httpRequest = new XMLHttpRequest();
+
+			//this will happen if the XMLHttpRequest object cannot be created (this can happen in Internet Explorer)
+			if (!httpRequest) {
+				//warn the user and exit the function by returning false
+				alert('Warning: Cannot create an XMLHTTP instance');
+				return false;
+			}
+
+			//set an event listener for when the HTTP state changes
+			httpRequest.onreadystatechange = function () {
+
+				//a successful HTTP request returns a status of 200
+				if (httpRequest.readyState === XMLHttpRequest.DONE) {
+					if (httpRequest.status === 200) {
+
+						//get the json String, parse top JSON object
+						jsonString = JSON.parse(httpRequest.responseText);
+
+						//load it onto the map
+						journeysToMap();
+					}
+				}
+			};
+
+			//prepare and send the request
+			httpRequest.open('GET', url);
+			httpRequest.send();
+		}
+		
+		/**
+		 * Load the journey lines onto the Google Map
+		 * returns nothing 
+		 */
+		function journeysToMap() {
+
+			var path = [];
+			var lines = [];
+			var count;
+			var opacity;
+			var width;
+			
+			//get the range of the passenger count values (for symbology classification)
+			var max = 0;
+			var min = 999999;
+			for (var i = 0; i < jsonString.length; i++) {
+				if (parseInt(jsonString[i]['cnt']) > max) max = parseInt(jsonString[i]['cnt']);
+				if (parseInt(jsonString[i]['cnt']) < min) min = parseInt(jsonString[i]['cnt']);
+			}
+			var difference = max - min;
+			var interval = difference / 5;
+			
+			//loop through each journey
+			for (var i = 0; i < jsonString.length; i++) {
+				
+				//get the passenger count value for the journey
+				count = parseInt(jsonString[i]['cnt']);
+			
+				//assign the appropriate colour ()
+				switch (true) {
+					case (count <= interval):
+						lineColour = "#ffffb2";
+						opacity = 0.2;
+						weight = 1;
+						break;
+					case (count <= interval*2):
+						lineColour = "#fecc5c";
+						opacity = 0.3;
+						weight = 2;
+						break;
+					case (count <= interval*3):
+						lineColour = "#fd8d3c";
+						opacity = 0.4;
+						weight = 3;
+						break;
+					case (count <= interval*4):
+						lineColour = "#f03b20";
+						opacity = 0.5;
+						weight = 4;
+						break;
+					case (count > interval*4):
+						lineColour = "#bd0026";
+						opacity = 0.6;
+						weight = 5;
+						break;
+					default:
+						//just use grey for any other crimes...
+						lineColour = "#ffffb2";
+						opacity = 0.2;
+						weight = 1;
+				}
+				
+				//get the journey details
+				path = [
+					{lng: parseFloat(jsonString[i]['startX']), lat: parseFloat(jsonString[i]['startY'])}, 
+					{lng: parseFloat(jsonString[i]['endX']), lat: parseFloat(jsonString[i]['endY'])}
+				];
+				
+				//add polyline to array
+				lines.push(new google.maps.Polyline({
+					path: path,
+					map: map,
+					clickable: false,
+			        strokeColor: lineColour,
+					strokeOpacity: opacity,
+					strokeWeight: weight
+				}));
+			}
+		}
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+  </body>
+</html>

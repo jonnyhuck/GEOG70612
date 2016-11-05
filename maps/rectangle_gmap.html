@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Battleships!</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        width: 100%;
+        height: 100%;
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+
+		var map;
+		var battleships = [];
+		
+		//callback function for when Google Maps loads
+		function initMap() {
+		
+			//set up the map
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: 0, lng: 0}, 
+				zoom: 2
+			});
+		
+			//create and add a rectangle
+			var rectangle = new google.maps.Rectangle({
+			  strokeColor: '#FF0000',
+			  strokeOpacity: 0.8,
+			  strokeWeight: 2,
+			  fillColor: '#FF0000',
+			  fillOpacity: 0.35,
+			  draggable: true,
+			  map: map,
+			  bounds: {
+				north: 45,
+				south: -45,
+				east: 45,
+				west: -45
+			  }
+			});
+			
+			//add to global battleships array
+			battleships.push(rectangle);
+		}
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry&callback=initMap" async defer></script>
+  </body>
+</html>

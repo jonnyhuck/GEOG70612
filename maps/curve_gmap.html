@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bezier Curve Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+
+		var map;
+		
+		/**
+		 * Callback for when google maps is loaded
+		 */
+		function initMap() {
+	
+		  	//set up the map
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: 19.134789, lng: -74.61914}, 
+				zoom: 7,
+				styles: [{
+					stylers: [{
+						saturation: -100
+					}]
+				}]
+			});
+			
+			//construct a line
+			line = turf.lineString([
+				[18.427501, -76.091308],
+				[18.729501 ,-76.695556],
+				[19.40443, -76.552734],
+				[19.134789, -74.61914],
+				[20.07657, -73.652343],
+				[20.210656, -73.157958]
+			]);
+
+			//build path node by node
+			var lPath = [];
+			for (var j = 0; j < line['geometry']['coordinates'].length; j++){
+
+				//add the next node to the line
+				lPath.push({lng: line['geometry']['coordinates'][j][1], 
+					lat: line['geometry']['coordinates'][j][0]});
+			}
+
+			//calculate the bezier curve
+			var bezier = turf.bezier(line, 100000, 0.8);
+
+			//build path node by node
+			var bPath = [];
+			for (var k = 0; k < bezier['geometry']['coordinates'].length; k++){
+				//add the next node to the line
+				bPath.push({lng: bezier['geometry']['coordinates'][k][1], 
+					lat: bezier['geometry']['coordinates'][k][0]});
+			}
+			
+			//SVG symbol for dotted line
+			var lineSymbol = {
+          		path: 'M 0,-1 0,1',
+          		strokeOpacity: 1,
+          		strokeColor: '#ff0000',
+          		scale: 5
+        	};
+	
+			//add bezier to the map
+			new google.maps.Polyline({
+				path: bPath,
+				map: map,
+				clickable: false,
+				strokeColor: '#0000ff',
+				strokeOpacity: 1,
+				strokeWeight: 6
+			});
+			
+			//add original line to the map as dotted overlay
+			new google.maps.Polyline({
+				path: lPath,
+				map: map,
+				clickable: false,
+				strokeOpacity: 0,
+				icons: [{
+					icon: lineSymbol,
+					offset: '0',
+					repeat: '25px'
+				}]
+			});
+		}
+    </script>
+    <script src="http://students.jonnyhuck.co.uk/gisandtheweb/code/turf.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer ></script>
+  </body>
+</html>

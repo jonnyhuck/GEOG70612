@@ -26,9 +26,9 @@
 		
 			//set map options and instantiate
 			var map = new google.maps.Map(document.getElementById('map'), {
-			zoom: 2,
-			center: {lat: 0, lng: 0},
-			mapTypeId: google.maps.MapTypeId.TERRAIN
+				zoom: 2,
+				center: {lat: 0, lng: 0},
+				mapTypeId: google.maps.MapTypeId.TERRAIN
 			});
 
 			//instantiate array to hold the circle coordinates
@@ -41,15 +41,15 @@
 
 			//construct a draggable red circle with geodesic set to true.
 			new google.maps.Polygon({
-			map: map,
-			paths: coords,
-			strokeColor: '#FF0000',
-			strokeOpacity: 0.8,
-			strokeWeight: 2,
-			fillColor: '#FF0000',
-			fillOpacity: 0.35,
-			draggable: true,
-			geodesic: true
+				map: map,
+				paths: coords,
+				strokeColor: '#FF0000',
+				strokeOpacity: 0.8,
+				strokeWeight: 2,
+				fillColor: '#FF0000',
+				fillOpacity: 0.35,
+				draggable: true,
+				geodesic: true
 			});
 
 			//coordinates for Greenland
@@ -57,17 +57,16 @@
 
 			//construct a draggable red circle with geodesic set to true.
 			new google.maps.Polygon({
-			map: map,
-			paths: greenland,
-			strokeColor: '#00FF00',
-			strokeOpacity: 0.8,
-			strokeWeight: 2,
-			fillColor: '#00FF00',
-			fillOpacity: 0.35,
-			draggable: true,
-			geodesic: true
+				map: map,
+				paths: greenland,
+				strokeColor: '#00FF00',
+				strokeOpacity: 0.8,
+				strokeWeight: 2,
+				fillColor: '#00FF00',
+				fillOpacity: 0.35,
+				draggable: true,
+				geodesic: true
 			});
-		  
 		}
 		
 		/**
