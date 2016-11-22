@@ -81,7 +81,7 @@ function calcDist(lat1, lon1, lat2, lon2){
 function calcBearing(φ1, λ1, φ2, λ2) {
 	var y = Math.sin(λ2-λ1) * Math.cos(φ2);
 	var x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(λ2-λ1);
-	return wrapAngle(Math.atan2(y, x).toDegrees() - 90;
+	return wrapAngle(Math.atan2(y, x).toDegrees() - 90);
 }
 
 
